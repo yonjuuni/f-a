@@ -5,7 +5,7 @@ Filmadvisor (tentative title) is a web-based application that should make sugges
 
 The initial plan is to create the following components:
  1. Web-application: Django + Bootstrap. Display the main page, get user input, show results.
- 2. Text recognition module: NLTK. Analyze the text input, search for synonyms, identify the most probable movie genre based on that.
+ 2. Text recognition module: NLTK. Analyze the text input, search for synonyms, suggest the most relevant movies based on that.
  3. Movie list generator: python. A module that would get the movie list from the database based on the analyzed input and return to the main web application to display.
  4. Database generator: python. A module to keep the initially generated database up-to-date, generate new titles, get related info from IMDB, Netflix, Kinopoisk and keep related title information.
  5. Database: technology TBD.
