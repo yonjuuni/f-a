@@ -40,7 +40,7 @@ def send_email(subject, text, _to='alex@s1ck.org', _from='info@s1ck.org'):
         s.starttls()
         s.login('info@s1ck.org', get_email_password())
     except Exception as e:
-        logger.error('Unable to connect to SMPT server. '
+        logger.error('Unable to connect to SMTP server. '
                      'Error details: {}'.format(e))
     else:
         try:
