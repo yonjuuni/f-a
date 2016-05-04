@@ -1,8 +1,10 @@
 import os
 import requests
 import smtplib
+import logging
 from email.mime.text import MIMEText
 from base64 import b64encode, b64decode
+from config import LOG_FILE
 
 
 def get_trailers_by_title(title, limit=5):
@@ -38,12 +40,16 @@ def send_email(subject, text, _to='alex@s1ck.org', _from='info@s1ck.org'):
         s.starttls()
         s.login('info@s1ck.org', get_email_password())
     except Exception as e:
-        print('Unable to connect to SMPT server.\nError details:', e)
+        logger.error('Unable to connect to SMPT server. '
+                     'Error details: {}'.format(e))
     else:
         try:
             s.send_message(msg)
         except Exception as e:
-            print('Unable to send email.\nError details:', e)
+            logger.error('Unable to send email. Error details: {}'.format(e))
+        else:
+            logger.info('Sent an email to {}, subject: "{}"'.format(_to,
+                                                                    subject))
     finally:
         s.quit()
 
@@ -70,6 +76,19 @@ def get_email_password():
         print("Password doesn't exist, store it by running 'python helper_fun"
               "ctions.py'")
         return ''
+
+
+def get_logger(name):
+    logging.basicConfig(filename=LOG_FILE,
+                        level=logging.DEBUG,
+                        format=('%(asctime)s :: %(name)s :: %(levelname)s :: '
+                                '%(message)s'),
+                        datefmt='%m/%d/%Y %H:%M:%S')
+    logger = logging.getLogger(name)
+    return logger
+
+
+logger = get_logger(__file__)
 
 
 if __name__ == '__main__':

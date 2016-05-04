@@ -2,10 +2,15 @@ import os
 from base64 import b64encode
 
 
+DEBUG = True  # Flask debug, set it to False on production
+APP_DEBUG = False  # Non-flask debug
+LOG_FILE = 'debug.log'
+
+
 HOST = '0.0.0.0'
 PORT = '5000'
 DB_DRIVER = 'postgresql'
-DB_USER = 'root'
+DB_USER = 'alex'
 DB_PASSWORD = ''
 DB_HOST = 'localhost'
 DB_NAME = 'filmadvisor'
@@ -32,6 +37,3 @@ else:
     if '.secret' not in f.readlines() and '.secret\n' not in f.readlines():
         f.write('.secret\n')
     f.close()
-
-
-DEBUG = True  # set it to False on production
