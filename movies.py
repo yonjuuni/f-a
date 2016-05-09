@@ -3,7 +3,7 @@ import aiohttp
 import sys
 import signal
 from helper_functions import get_logger
-from db_connect import db, Movie
+from db_connect import db, Movie, Genre, Actor
 from pprint import pprint
 from config import APP_DEBUG as DEBUG
 from urllib.parse import quote
@@ -74,13 +74,35 @@ async def work_item(movie):
             if res.get('imdbRating') != 'N/A':
                 movie.imdb_rating = float(res.get('imdbRating'))
 
-            # movie.genres = res.get('genres')
-            # movie.actors = res.get('actors')
+            if res.get('Genre') != 'N/A':
+                db_genres = [genre.name for genre in db.query(Genre)]
+                for genre in [g.strip(' ,').lower() for g
+                              in res.get('Genre').split()]:
+
+                    if genre not in db_genres:
+                        db.add(Genre(name=genre))
+                        db.commit()
+
+                    if genre not in [g.name for g in movie.genres]:
+                        movie.genres.append(db.query(Genre).
+                                            filter(Genre.name == genre).one())
+
+            if res.get('Actors') != 'N/A':
+                db_actors = [actor.name for actor in db.query(Actor)]
+                for actor in res.get('Actors').split(', '):
+
+                    if actor not in db_actors:
+                        db.add(Actor(name=actor))
+                        db.commit()
+
+                    if actor not in [actor.name for actor in movie.actors]:
+                        movie.actors.append(db.query(Actor).
+                                            filter(Actor.name == actor).one())
 
             if res.get('Plot') != 'N/A':
-                movie.description = res.get('Plot')
+                movie.plot = res.get('Plot')
             else:
-                movie.description = None
+                movie.plot = None
         else:
             print('{}: Not found ({})'.format(movie.id, movie.title))
             logger.warning('{} - "{}" ({})'.format('NOT FOUND',

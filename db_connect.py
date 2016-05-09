@@ -14,9 +14,13 @@ logger = get_logger(__file__)
 Base = declarative_base()
 
 
-# movies_actors = Table('movies_actors', Base.metadata,
-#                       Column('movie_id', Integer, ForeignKey('movie.id')),
-#                       Column('actor_id', Integer, ForeignKey('actor.id')))
+movies_actors = Table('movies_actors', Base.metadata,
+                      Column('movie_id', Integer, ForeignKey('movie.id')),
+                      Column('actor_id', Integer, ForeignKey('actor.id')))
+
+movies_genres = Table('movies_genres', Base.metadata,
+                      Column('movie_id', Integer, ForeignKey('movie.id')),
+                      Column('genre_id', Integer, ForeignKey('genre.id')))
 
 
 class Movie(Base):
@@ -26,29 +30,55 @@ class Movie(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String)
     year = Column(Integer)
-    description = Column(String)
+    plot = Column(String)
     imdb_rating = Column(Float)
-    genres = Column(postgresql.ARRAY(Integer, dimensions=1))
     type = Column(Enum('movie', 'series', 'episode'))
     imdb_id = Column(String)
     poster_url = Column(String)
     checked = Column(Boolean)
     errors = Column(Boolean)
 
-    # actors = relationship('Actor',
-                          # secondary=movies_actors,
-                          # back_populates='movies')
+    actors = relationship('Actor',
+                          secondary=movies_actors,
+                          back_populates='movies')
+
+    genres = relationship('Genre',
+                          secondary=movies_genres,
+                          back_populates='movies')
+
+    def __init__(self, title, year):
+        self.title = title
+        self.year = year
 
 
-# class Actor(Base):
+class Actor(Base):
 
-#     __tablename__ = 'actor'
+    __tablename__ = 'actor'
 
-#     id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
 
-#     movies = relationship('Movie',
-#                           secondary=movies_actors,
-#                           back_populates='actors')
+    movies = relationship('Movie',
+                          secondary=movies_actors,
+                          back_populates='actors')
+
+    def __init__(self, name):
+        self.name = name
+
+
+class Genre(Base):
+
+    __tablename__ = 'genre'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+
+    movies = relationship('Movie',
+                          secondary=movies_genres,
+                          back_populates='genres')
+
+    def __init__(self, name):
+            self.name = name
 
 
 def get_redis_conn():
