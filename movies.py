@@ -2,10 +2,14 @@ import asyncio
 import aiohttp
 import sys
 import signal
+import os
 from helper_functions import get_logger
-from db_connect import db, Movie, Genre, Actor
+from db_connect import db
+from db_connect import Movie
+from db_connect import Genre
+from db_connect import Actor
 from pprint import pprint
-from config import APP_DEBUG as DEBUG
+from config import APP_DEBUG
 from urllib.parse import quote
 
 
@@ -34,97 +38,103 @@ async def omdb_get(movie):
              }
     data = await get_json(session, URL, query)
 
-    if DEBUG:
+    if APP_DEBUG:
         pprint(data)
 
     return data
 
 
 async def check_movie(movie):
-    print('{}: Working'.format(movie.id))
+    print('{}: Working'.format(movie.movie_id))
     try:
-        res = await omdb_get(movie)
+        data = await omdb_get(movie)
     except:
-        if DEBUG:
-            print('Exception took place. Details: ', sys.exc_info())
-        logger.error('{} :: "{}" :: {}'.format(movie.id, movie.title,
+        logger.error('{} :: "{}" :: {}'.format(movie.movie_id, movie.title,
                                                sys.exc_info()))
-        res = {}
-        res['errors'] = True
+        data = {}
+        data['errors'] = True
     else:
-        return res
+        return data
+
+
+def push_to_db(obj):
+    db.add(obj)
+    db.commit()
+
+
+db_genres = [genre.name for genre in db.query(Genre).all()]
+db_actors = [actor.name for actor in db.query(Actor).all()]
+
+
+def parse_response(data, movie):
+    if data.get('Type') in ['movie', 'series', 'episode']:
+        movie.movie_type = data.get('Type')
+
+    movie.imdb_id = data.get('imdbID')
+
+    if data.get('Poster') != 'N/A':
+        movie.poster_url = data.get('Poster')
+
+    if data.get('imdbRating') != 'N/A':
+        movie.imdb_rating = float(data.get('imdbRating'))
+
+    if data.get('Genre') != 'N/A':
+        # db_genres = [genre.name for genre in db.query(Genre).all()]
+        for genre in [g.strip(' ,').lower() for g
+                      in data.get('Genre').split()]:
+
+            if genre not in db_genres:
+                db_genres.append(genre)
+                push_to_db(Genre(name=genre))
+
+            if genre not in [g.name for g in movie.genres]:
+                movie.genres.append(db.query(Genre).
+                                    filter(Genre.name == genre).one())
+
+    if data.get('Actors') != 'N/A':
+        for actor in [actor.strip() for actor
+                      in data.get('Actors').split(',')]:
+
+            if actor not in db_actors:
+                db_actors.append(actor)
+                push_to_db(Actor(name=actor))
+
+            if actor not in [actor.name for actor in movie.actors]:
+                movie.actors.append(db.query(Actor).
+                                    filter(Actor.name == actor).one())
+
+    if data.get('Plot') != 'N/A':
+        movie.plot = data.get('Plot')
+
+    return movie
 
 
 async def work_item(movie):
-    res = await check_movie(movie)
+    data = await check_movie(movie)
 
-    if res:
-        if res.get('Response', 0) == 'True':
+    if data:
+        if data.get('Response', 0) == 'True':
+            movie = parse_response(data, movie)
 
-            if res.get('Type') in ['movie', 'series', 'episode']:
-                movie.type = res.get('Type')
-
-            movie.imdb_id = res.get('imdbID')
-
-            if res.get('Poster') != 'N/A':
-                movie.poster_url = res.get('Poster')
-            else:
-                movie.poster_url = None
-
-            if res.get('imdbRating') != 'N/A':
-                movie.imdb_rating = float(res.get('imdbRating'))
-
-            if res.get('Genre') != 'N/A':
-                db_genres = [genre.name for genre in db.query(Genre)]
-                for genre in [g.strip(' ,').lower() for g
-                              in res.get('Genre').split()]:
-
-                    if genre not in db_genres:
-                        db.add(Genre(name=genre))
-                        db.commit()
-
-                    if genre not in [g.name for g in movie.genres]:
-                        movie.genres.append(db.query(Genre).
-                                            filter(Genre.name == genre).one())
-
-            if res.get('Actors') != 'N/A':
-                db_actors = [actor.name for actor in db.query(Actor)]
-                for actor in res.get('Actors').split(', '):
-
-                    if actor not in db_actors:
-                        db.add(Actor(name=actor))
-                        db.commit()
-
-                    if actor not in [actor.name for actor in movie.actors]:
-                        movie.actors.append(db.query(Actor).
-                                            filter(Actor.name == actor).one())
-
-            if res.get('Plot') != 'N/A':
-                movie.plot = res.get('Plot')
-            else:
-                movie.plot = None
         else:
-            print('{}: Not found ({})'.format(movie.id, movie.title))
-            logger.warning('{} - "{}" ({})'.format('NOT FOUND',
-                                                   movie.id,
+            print('{}: Not found ({})'.format(movie.movie_id, movie.title))
+            logger.warning('{} - "{}" ({})'.format('NOT FOUND', movie.movie_id,
                                                    movie.title))
             movie.errors = True
 
-        if DEBUG:
+        if APP_DEBUG:
             print(movie.__dict__)
 
         try:
             movie.checked = True
-            db.add(movie)
-            db.flush()
+            push_to_db(movie)
         except Exception as e:
             print('There was an error in DB commit: ', e)
-            logger.error('{} :: "{}" :: {}'.format(movie.id, movie.title, e))
+            logger.error('{} :: "{}" :: {}'.format(movie.movie_id,
+                                                   movie.title, e))
             db.rollback()
         else:
-            print('{}: Success (DB update)'.format(movie.id))
-        finally:
-            db.commit()
+            print('{}: Success (DB update)'.format(movie.movie_id))
 
 
 def walker():

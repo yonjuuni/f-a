@@ -3,7 +3,8 @@ import requests
 import smtplib
 import logging
 from email.mime.text import MIMEText
-from base64 import b64encode, b64decode
+from base64 import b64encode
+from base64 import b64decode
 from config import LOG_FILE
 
 
@@ -23,9 +24,9 @@ def get_trailers_by_title(title, limit=5):
 def get_trailers():
     trailers = []
     for title in ['Love Actually', 'Cloud Atlas']:
-        t = get_trailers_by_title(title)
-        if t:
-            trailers.extend(t)
+        title_trailers = get_trailers_by_title(title)
+        if title_trailers:
+            trailers.extend(title_trailers)
     return trailers
 
 
@@ -36,22 +37,22 @@ def send_email(subject, text, _to='alex@s1ck.org', _from='info@s1ck.org'):
     msg['To'] = _to
 
     try:
-        s = smtplib.SMTP(host='smtp.gmail.com', port=587)
-        s.starttls()
-        s.login('info@s1ck.org', get_email_password())
+        smtp_conn = smtplib.SMTP(host='smtp.gmail.com', port=587)
+        smtp_conn.starttls()
+        smtp_conn.login('info@s1ck.org', get_email_password())
     except Exception as e:
         logger.error('Unable to connect to SMTP server. '
                      'Error details: {}'.format(e))
     else:
         try:
-            s.send_message(msg)
+            smtp_conn.send_message(msg)
         except Exception as e:
             logger.error('Unable to send email. Error details: {}'.format(e))
         else:
             logger.info('Sent an email to {}, subject: "{}"'.format(_to,
                                                                     subject))
     finally:
-        s.quit()
+        smtp_conn.quit()
 
 
 def set_email_password():
@@ -84,8 +85,7 @@ def get_logger(name):
                         format=('%(asctime)s :: %(name)s :: %(levelname)s :: '
                                 '%(message)s'),
                         datefmt='%m/%d/%Y %H:%M:%S')
-    logger = logging.getLogger(name)
-    return logger
+    return logging.getLogger(name)
 
 
 logger = get_logger(__file__)

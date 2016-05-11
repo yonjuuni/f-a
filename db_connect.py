@@ -1,12 +1,24 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey,\
-                       Table, Float, Enum, Boolean
+from sqlalchemy import create_engine
+from sqlalchemy import Column
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy import ForeignKey
+from sqlalchemy import Table
+from sqlalchemy import Float
+from sqlalchemy import Enum
+from sqlalchemy import Boolean
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import relationship
 from sqlalchemy.dialects import postgresql
 from redis import Redis
-from config import DB_DRIVER, DB_USER, DB_PASSWORD, DB_HOST, DB_NAME,\
-                   REDIS_SETTINGS
-from config import APP_DEBUG as DEBUG
+from config import DB_DRIVER
+from config import DB_USER
+from config import DB_PASSWORD
+from config import DB_HOST
+from config import DB_NAME
+from config import REDIS_SETTINGS
+from config import APP_DEBUG
 from helper_functions import get_logger
 
 
@@ -15,24 +27,28 @@ Base = declarative_base()
 
 
 movies_actors = Table('movies_actors', Base.metadata,
-                      Column('movie_id', Integer, ForeignKey('movie.id')),
-                      Column('actor_id', Integer, ForeignKey('actor.id')))
+                      Column('movie_id', Integer,
+                             ForeignKey('movie.movie_id')),
+                      Column('actor_id', Integer,
+                             ForeignKey('actor.actor_id')))
 
 movies_genres = Table('movies_genres', Base.metadata,
-                      Column('movie_id', Integer, ForeignKey('movie.id')),
-                      Column('genre_id', Integer, ForeignKey('genre.id')))
+                      Column('movie_id', Integer,
+                             ForeignKey('movie.movie_id')),
+                      Column('genre_id', Integer,
+                             ForeignKey('genre.genre_id')))
 
 
 class Movie(Base):
 
     __tablename__ = 'movie'
 
-    id = Column(Integer, primary_key=True)
+    movie_id = Column(Integer, primary_key=True)
     title = Column(String)
     year = Column(Integer)
     plot = Column(String)
     imdb_rating = Column(Float)
-    type = Column(Enum('movie', 'series', 'episode'))
+    movie_type = Column(Enum('movie', 'series', 'episode'))
     imdb_id = Column(String)
     poster_url = Column(String)
     checked = Column(Boolean)
@@ -55,7 +71,7 @@ class Actor(Base):
 
     __tablename__ = 'actor'
 
-    id = Column(Integer, primary_key=True)
+    actor_id = Column(Integer, primary_key=True)
     name = Column(String)
 
     movies = relationship('Movie',
@@ -70,7 +86,7 @@ class Genre(Base):
 
     __tablename__ = 'genre'
 
-    id = Column(Integer, primary_key=True)
+    genre_id = Column(Integer, primary_key=True)
     name = Column(String)
 
     movies = relationship('Movie',
@@ -94,7 +110,8 @@ def get_redis_conn():
 def get_session():
     try:
         engine = create_engine("{}:///{}".format(DB_DRIVER,
-                                                 DB_NAME), echo=DEBUG)
+                                                 DB_NAME),
+                               echo=APP_DEBUG)
         session = sessionmaker(bind=engine)
         session().query(Movie).limit(1)
     except Exception as e:
@@ -108,4 +125,4 @@ def get_session():
 
 
 db = get_session()
-r = get_redis_conn()
+# r = get_redis_conn()
