@@ -20,3 +20,7 @@ def index(trailers=None):
     return render_template('index.html',
                            queries=session['queries'][-5:][::-1],
                            trailers=get_trailers()[:10])
+
+
+if __name__ == '__main__':
+    app.run()

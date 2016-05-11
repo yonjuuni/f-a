@@ -1,5 +1,5 @@
 import re
-from app.db_connect import r, Movie, db
+from db_connect import r, Movie, db
 
 
 file_1 = '/home/alex/code/filmadvisor/sources/movies_filtered.txt'
