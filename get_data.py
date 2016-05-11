@@ -1,5 +1,5 @@
 import re
-from db_connect import r
+from app.db_connect import r, Movie, db
 
 
 file_1 = '/home/alex/code/filmadvisor/sources/movies_filtered.txt'
@@ -32,14 +32,30 @@ def clean(line):
     return title, year, episode
 
 
-titles = set()
-for movie in [item.strip() for item in open(file_1).readlines()]:
-    titles.add(movie)
+def add_to_db(line):
+    line = line.split('?!WTF?!')
+    m = Movie()
+    m.title = line[0]
+    m.year = line[1]
+    if m.year.isnumeric():
+        db.add(m)
 
-for line in [item.strip() for item in open(file_2, encoding='latin-1').readlines()]:
-    movie = clean(line)[0]
-    if movie:
-        if not check_title(movie):
-            r.hset('movies', movie, i)
-            print('{}: {}'.format(i, movie))
-print('{}: {}'.format(i, movie))
+
+# titles = {}
+# # for movie in [item.strip() for item in open(file_1).readlines()]:
+# #     titles.add(movie)
+
+
+# for line in [item.strip() for item in open(file_2, encoding='latin-1').readlines()]:
+#     data = clean(line)
+#     if data:
+#         titles[data[0]] = data[1]
+
+# f = open('temp', 'w+')
+# for x, y in titles.items():
+#     f.write('{}?!WTF?!{}\n'.format(x, y))
+
+f = open('temp')
+for i in f.readlines():
+    add_to_db(i.strip())
+db.commit()

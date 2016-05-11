@@ -3,25 +3,27 @@ import aiohttp
 import sys
 import signal
 import os
-from helper_functions import get_logger
 from db_connect import db
 from db_connect import Movie
 from db_connect import Genre
 from db_connect import Actor
 from pprint import pprint
-from config import APP_DEBUG
 from urllib.parse import quote
+from config import APP_DEBUG
+from helper_functions import get_logger
 
 
 QUERY_LIMIT = 100
 URL = 'http://www.omdbapi.com/'
 REQUEST_TIMEOUT = 10
 
-
 logger = get_logger(__file__)
 loop = asyncio.get_event_loop()
 conn = aiohttp.TCPConnector(limit=50)
 session = aiohttp.ClientSession(loop=loop, connector=conn)
+
+db_genres = [genre.name for genre in db.query(Genre).all()]
+db_actors = [actor.name for actor in db.query(Actor).all()]
 
 
 async def get_json(session, url, query):
@@ -60,10 +62,6 @@ async def check_movie(movie):
 def push_to_db(obj):
     db.add(obj)
     db.commit()
-
-
-db_genres = [genre.name for genre in db.query(Genre).all()]
-db_actors = [actor.name for actor in db.query(Actor).all()]
 
 
 def parse_response(data, movie):
@@ -149,6 +147,8 @@ def walker():
         logger.info('Updating {} items now.'.format(len(tasks)))
         loop.run_until_complete(asyncio.gather(*tasks))
 
+    exit()
+
 
 def exit(*args):
     logger.info('EXITING NOW.')
@@ -161,4 +161,3 @@ def exit(*args):
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, exit)
     walker()
-    exit()
