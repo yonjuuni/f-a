@@ -5,7 +5,8 @@ import logging
 from email.mime.text import MIMEText
 from base64 import b64encode
 from base64 import b64decode
-from config import LOG_FILE
+from .config import BASE_DIR
+from .config import LOG_FILE
 
 
 def get_trailers_by_title(title, limit=5):
@@ -40,9 +41,14 @@ def send_email(subject, text, _to='alex@s1ck.org', _from='info@s1ck.org'):
         smtp_conn = smtplib.SMTP(host='smtp.gmail.com', port=587)
         smtp_conn.starttls()
         smtp_conn.login('info@s1ck.org', get_email_password())
-    except Exception as e:
-        logger.error('Unable to connect to SMTP server. '
-                     'Error details: {}'.format(e))
+    except SMTPHeloError:
+        logger.error('Unable to initiate SMTP connection.')
+    except SMTPAuthenticationError:
+        logger.error('Wrong username/password for SMTP authentication.')
+    except SMTPNotSupportedError:
+        logger.error('The AUTH command is not supported by the server.')
+    except SMTPException:
+        logger.error('No suitable authentication method was found.')
     else:
         try:
             smtp_conn.send_message(msg)
@@ -56,8 +62,7 @@ def send_email(subject, text, _to='alex@s1ck.org', _from='info@s1ck.org'):
 
 
 def set_email_password():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    pwd_file = os.path.join(basedir, '.pwd')
+    pwd_file = os.path.join(BASE_DIR, '.pwd')
     temp = input('Enter your email account password: ')
     f = open(pwd_file, 'wb')
     f.write(b64encode(temp.encode()))
@@ -66,8 +71,7 @@ def set_email_password():
 
 
 def get_email_password():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    pwd_file = os.path.join(basedir, '.pwd')
+    pwd_file = os.path.join(BASE_DIR, '.pwd')
     if os.path.exists(pwd_file):
         f = open(pwd_file, 'rb')
         email_pwd = b64decode(f.read().strip()).decode()
@@ -85,6 +89,7 @@ def get_logger(name):
                         format=('%(asctime)s :: %(name)s :: %(levelname)s :: '
                                 '%(message)s'),
                         datefmt='%m/%d/%Y %H:%M:%S')
+
     return logging.getLogger(name)
 
 

@@ -11,15 +11,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects import postgresql
-from redis import Redis
-from config import DB_DRIVER
-from config import DB_USER
-from config import DB_PASSWORD
-from config import DB_HOST
-from config import DB_NAME
-from config import REDIS_SETTINGS
-from config import APP_DEBUG
-from helper_functions import get_logger
+from .config import DB_DRIVER
+from .config import DB_USER
+from .config import DB_PASSWORD
+from .config import DB_HOST
+from .config import DB_NAME
+from .config import APP_DEBUG
+from .helper_functions import get_logger
 
 
 logger = get_logger(__file__)
@@ -97,26 +95,14 @@ class Genre(Base):
             self.name = name
 
 
-def get_redis_conn():
-    try:
-        r = Redis(**REDIS_SETTINGS)
-        r.ping()
-    except Exception as e:
-        print('Unable to connect to Redis.\nError:', e)
-    else:
-        return r
-
-
 def get_session():
     try:
         engine = create_engine("{}:///{}".format(DB_DRIVER,
                                                  DB_NAME),
                                echo=APP_DEBUG)
         session = sessionmaker(bind=engine)
-        session().query(Movie).limit(1)
+        session().query(Genre).first()
     except Exception as e:
-        # print('Unable to connect to database.\n'
-        #       'Details:\n{}'.format(e))
         logger.critical('Unable to connect to database. '
                         'Details:\n{}'.format(e))
         raise e
@@ -125,4 +111,3 @@ def get_session():
 
 
 db = get_session()
-# r = get_redis_conn()

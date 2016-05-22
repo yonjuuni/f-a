@@ -3,14 +3,14 @@ import aiohttp
 import sys
 import signal
 import os
-from db_connect import db
-from db_connect import Movie
-from db_connect import Genre
-from db_connect import Actor
 from pprint import pprint
 from urllib.parse import quote
-from config import APP_DEBUG
-from helper_functions import get_logger
+from .config import APP_DEBUG
+from .db_connect import db
+from .db_connect import Movie
+from .db_connect import Genre
+from .db_connect import Actor
+from .helper_functions import get_logger
 
 
 QUERY_LIMIT = 100
@@ -22,8 +22,8 @@ loop = asyncio.get_event_loop()
 conn = aiohttp.TCPConnector(limit=50)
 session = aiohttp.ClientSession(loop=loop, connector=conn)
 
-db_genres = [genre.name for genre in db.query(Genre).all()]
-db_actors = [actor.name for actor in db.query(Actor).all()]
+db_genres = {genre.name for genre in db.query(Genre).all()}
+db_actors = {actor.name for actor in db.query(Actor).all()}
 
 
 async def get_json(session, url, query):
@@ -59,11 +59,6 @@ async def check_movie(movie):
         return data
 
 
-def push_to_db(obj):
-    db.add(obj)
-    db.commit()
-
-
 def parse_response(data, movie):
     if data.get('Type') in ['movie', 'series', 'episode']:
         movie.movie_type = data.get('Type')
@@ -77,13 +72,12 @@ def parse_response(data, movie):
         movie.imdb_rating = float(data.get('imdbRating'))
 
     if data.get('Genre') != 'N/A':
-        # db_genres = [genre.name for genre in db.query(Genre).all()]
         for genre in [g.strip(' ,').lower() for g
                       in data.get('Genre').split()]:
 
             if genre not in db_genres:
-                db_genres.append(genre)
-                push_to_db(Genre(name=genre))
+                db_genres.extend(genre)
+                db.add(Genre(name=genre))
 
             if genre not in [g.name for g in movie.genres]:
                 movie.genres.append(db.query(Genre).
@@ -94,8 +88,8 @@ def parse_response(data, movie):
                       in data.get('Actors').split(',')]:
 
             if actor not in db_actors:
-                db_actors.append(actor)
-                push_to_db(Actor(name=actor))
+                db_actors.extend(actor)
+                db.add(Actor(name=actor))
 
             if actor not in [actor.name for actor in movie.actors]:
                 movie.actors.append(db.query(Actor).
@@ -125,9 +119,9 @@ async def work_item(movie):
 
         try:
             movie.checked = True
-            push_to_db(movie)
+            db.add(movie)
+            db.commit()
         except Exception as e:
-            print('There was an error in DB commit: ', e)
             logger.error('{} :: "{}" :: {}'.format(movie.movie_id,
                                                    movie.title, e))
             db.rollback()
