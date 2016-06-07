@@ -12,6 +12,7 @@ DB_USER = 'alex'
 DB_PASSWORD = ''
 DB_HOST = 'localhost'
 DB_NAME = 'filmadvisor'
+API_KEY = '2ad6ed09c5c8d5fd378d2c92135a43cf'
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 

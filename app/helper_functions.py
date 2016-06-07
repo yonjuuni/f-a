@@ -1,12 +1,33 @@
+import logging
 import os
 import requests
 import smtplib
-import logging
+import sys
+import tmdbsimple as tmdb
 from email.mime.text import MIMEText
 from base64 import b64encode
 from base64 import b64decode
+from random import randrange
 from .config import BASE_DIR
 from .config import LOG_FILE
+from .config import API_KEY
+from .db_connect import Movie
+
+
+tmdb.API_KEY = API_KEY
+
+
+def get_logger(name):
+    logging.basicConfig(filename=LOG_FILE,
+                        level=logging.DEBUG,
+                        format=('%(asctime)s :: %(name)s :: %(levelname)s :: '
+                                '%(message)s'),
+                        datefmt='%m/%d/%Y %H:%M:%S')
+
+    return logging.getLogger(name)
+
+
+logger = get_logger(__file__)
 
 
 def get_trailers_by_title(title, limit=5):
@@ -21,10 +42,11 @@ def get_trailers_by_title(title, limit=5):
         return res
 
 
-# TODO: remove hardcoded titles.
-def get_trailers():
+def get_trailers(limit, db):
     trailers = []
-    for title in ['Love Actually', 'Cloud Atlas']:
+    for title in [movie.title for movie in
+                  [db.query(Movie).get(randrange(0, db.query(Movie).count()))
+                   for _ in range(limit)]]:
         title_trailers = get_trailers_by_title(title)
         if title_trailers:
             trailers.extend(title_trailers)
@@ -79,24 +101,46 @@ def get_email_password():
         return email_pwd
     else:
         print("Password doesn't exist, store it by running 'python helper_fun"
-              "ctions.py'")
+              "ctions.py --set-email-password'")
         return ''
 
 
-def get_logger(name):
-    logging.basicConfig(filename=LOG_FILE,
-                        level=logging.DEBUG,
-                        format=('%(asctime)s :: %(name)s :: %(levelname)s :: '
-                                '%(message)s'),
-                        datefmt='%m/%d/%Y %H:%M:%S')
+def get_movies(_type):
+    movies = tmdb.Movies(_type)
+    request = movies.info()
+    results = []
+    for i, movie in enumerate(movies.results):
+        for genre in movie['genre_ids']:
+            if movies.results[i].get('genres'):
+                movies.results[i]['genres'].append(map_genre(genre))
+            else:
+                movies.results[i]['genres'] = [map_genre(genre), ]
+    return movies.results
 
-    return logging.getLogger(name)
+
+def get_movie_by_id(_id):
+    return tmdb.Movies(_id).info()
 
 
-logger = get_logger(__file__)
-
-
-if __name__ == '__main__':
-    ans = input("Set email password? (y/n) ").lower()
-    if ans == 'y':
-        set_email_password()
+def map_genre(_id):
+    g = {28: 'Action',
+         12: 'Adventure',
+         16: 'Animation',
+         35: 'Comedy',
+         80: 'Crime',
+         99: 'Documentary',
+         18: 'Drama',
+         10751: 'Family',
+         14: 'Fantasy',
+         10769: 'Foreign',
+         36: 'History',
+         27: 'Horror',
+         10402: 'Music',
+         9648: 'Mystery',
+         10749: 'Romance',
+         878: 'Science Fiction',
+         10770: 'TV Movie',
+         53: 'Thriller',
+         10752: 'War',
+         37: 'Western'}
+    return g[_id]

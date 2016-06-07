@@ -17,11 +17,26 @@ from .config import DB_PASSWORD
 from .config import DB_HOST
 from .config import DB_NAME
 from .config import APP_DEBUG
-from .helper_functions import get_logger
+# from .helper_functions import get_logger
 
 
-logger = get_logger(__file__)
+# logger = get_logger(__file__)
 Base = declarative_base()
+
+
+def get_db_session():
+    try:
+        engine = create_engine("{}:///{}".format(DB_DRIVER,
+                                                 DB_NAME),
+                               echo=APP_DEBUG)
+        session = sessionmaker(bind=engine)
+        session().query(Genre).first()
+    except Exception as e:
+        logger.critical('Unable to connect to database. '
+                        'Details:\n{}'.format(e))
+        raise e
+    else:
+        return session()
 
 
 movies_actors = Table('movies_actors', Base.metadata,
@@ -93,21 +108,3 @@ class Genre(Base):
 
     def __init__(self, name):
             self.name = name
-
-
-def get_session():
-    try:
-        engine = create_engine("{}:///{}".format(DB_DRIVER,
-                                                 DB_NAME),
-                               echo=APP_DEBUG)
-        session = sessionmaker(bind=engine)
-        session().query(Genre).first()
-    except Exception as e:
-        logger.critical('Unable to connect to database. '
-                        'Details:\n{}'.format(e))
-        raise e
-    else:
-        return session()
-
-
-db = get_session()

@@ -1,0 +1,31 @@
+{% macro header () %}
+<!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+            <a href="/" class="logo">
+                <span class="symbol"><img src="{{ app.router.static.url(filename='images/logo.svg') }}" alt="" /></span><span class="title" style='font-family:"comic"'>Film Advisor</span>
+            </a>
+
+        <!-- Nav -->
+            <nav>
+                <ul>
+                    <li><a href="#menu">Menu</a></li>
+                </ul>
+            </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+<h2>Menu</h2>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/?movie_type=popular">Popular</a></li>
+        <li><a href="/?movie_type=top_rated">Top Rated</a></li>
+        <li><a href="/?movie_type=upcoming">Upcoming</a></li>
+    </ul>
+</nav>
+{% endmacro %}

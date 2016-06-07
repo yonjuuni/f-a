@@ -1,1 +1,58 @@
-{% extends 'base.html' %}
+{% from 'header.html' import header with context %}
+{% from 'footer.html' import footer with context %}
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Film Advisor</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="{{ app.router.static.url(filename='js/ie/html5shiv.js') }}"></script><![endif]-->
+		<link rel="stylesheet" href="{{ app.router.static.url(filename='css/main.css') }}" />
+		<!--[if lte IE 9]><link rel="{{ app.router.static.url(filename='css/ie9.css') }}" /><![endif]-->
+		<!--[if lte IE 8]><link rel="{{ app.router.static.url(filename='css/ie8.css') }}" /><![endif]-->
+	</head>
+	<body onload=loadMovies('{{ movie_type }}')>
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+					{{ header() }}
+
+				<!-- Main -->
+					<div id="main">
+						<div class="inner" >
+							<ul class="actions fit">
+								<li><button class='button fit {{ "special" if movie_type=="popular" else "" }}' type="button" onclick="loadMovies('popular')">Popular</button></li>
+								<li><button class='button fit {{ "special" if movie_type=="top_rated" else "" }}' type="button" onclick="loadMovies('top_rated')">Top Rated</button></li>
+								<li><button class='button fit {{ "special" if movie_type=="upcoming" else "" }}' type="button" onclick="loadMovies('upcoming')">Upcoming</button></li>
+							</ul>
+							<div id='movies'>
+							</div>
+						</div>
+					</div>
+
+				{{ footer() }}
+
+			</div>
+
+		<!-- Scripts -->
+			<script>
+			function loadMovies(_type) {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (xhttp.readyState == 4 && xhttp.status == 200) {
+			      document.getElementById("movies").innerHTML = xhttp.responseText;
+			    }
+			  };
+			  xhttp.open("GET", "/movies?movie_type=" + _type, true);
+			  xhttp.send();
+			}
+			</script>
+			<script src="{{ app.router.static.url(filename='js/jquery.min.js') }}"></script>
+			<script src="{{ app.router.static.url(filename='js/skel.min.js') }}"></script>
+			<script src="{{ app.router.static.url(filename='js/util.js') }}"></script>
+			<!--[if lte IE 8]><script src="{{ app.router.static.url(filename='respond.min.js') }}"></script><![endif]-->
+			<script src="{{ app.router.static.url(filename='js/main.js') }}"></script>
+
+	</body>
+</html>
