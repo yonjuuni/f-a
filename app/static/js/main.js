@@ -198,3 +198,24 @@
 	});
 
 })(jQuery);
+
+function loadMovies(_type) {
+	var types = ['popular', 'top_rated', 'upcoming'];
+  for (var t in types) {
+  	if (types[t] == _type) {
+  	  document.getElementById(types[t]).className = "button fit special";
+  	} else {
+  		document.getElementById(types[t]).className = "button fit";
+  	}
+  };
+  
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      document.getElementById("movies").innerHTML = xhttp.responseText;
+    }
+  };
+
+  xhttp.open("GET", "/movies?movie_type=" + _type, true);
+  xhttp.send();	
+}

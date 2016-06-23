@@ -23,12 +23,28 @@
 					<div id="main">
 						<div class="inner" >
 							<ul class="actions fit">
-								<li><button class='button fit {{ "special" if movie_type=="popular" else "" }}' type="button" onclick="loadMovies('popular')">Popular</button></li>
-								<li><button class='button fit {{ "special" if movie_type=="top_rated" else "" }}' type="button" onclick="loadMovies('top_rated')">Top Rated</button></li>
-								<li><button class='button fit {{ "special" if movie_type=="upcoming" else "" }}' type="button" onclick="loadMovies('upcoming')">Upcoming</button></li>
+								<li><button id='popular' class='button fit {{ "special" if movie_type=="popular" else "" }}' type="button" onclick="loadMovies('popular')">Popular</button></li>
+								<li><button id='top_rated' class='button fit {{ "special" if movie_type=="top_rated" else "" }}' type="button" onclick="loadMovies('top_rated')">Top Rated</button></li>
+								<li><button id='upcoming' class='button fit {{ "special" if movie_type=="upcoming" else "" }}' type="button" onclick="loadMovies('upcoming')">Upcoming</button></li>
 							</ul>
+
 							<div id='movies'>
 							</div>
+							
+							<p></p>
+              <div class="inner fit">
+								<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+				        <!-- f-a-responsive -->
+				        <ins class="adsbygoogle"
+		              style="display:block"
+		              data-ad-client="ca-pub-9691889163015511"
+		              data-ad-slot="9969653715"
+		              data-ad-format="auto"></ins>
+				        <script>
+				        (adsbygoogle = window.adsbygoogle || []).push({});
+				        </script>          
+              </div>
+						
 						</div>
 					</div>
 
@@ -37,18 +53,6 @@
 			</div>
 
 		<!-- Scripts -->
-			<script>
-			function loadMovies(_type) {
-			  var xhttp = new XMLHttpRequest();
-			  xhttp.onreadystatechange = function() {
-			    if (xhttp.readyState == 4 && xhttp.status == 200) {
-			      document.getElementById("movies").innerHTML = xhttp.responseText;
-			    }
-			  };
-			  xhttp.open("GET", "/movies?movie_type=" + _type, true);
-			  xhttp.send();
-			}
-			</script>
 
 		{{ common_scripts() }}
 
