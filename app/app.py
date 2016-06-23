@@ -1,7 +1,7 @@
-import asyncio
+import os
 import aiohttp_jinja2
 import jinja2
-import os
+
 from aiohttp import web
 from aiohttp_session import session_middleware
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
@@ -10,7 +10,7 @@ from . import views
 
 
 app = web.Application(middlewares=[session_middleware(
-        EncryptedCookieStorage(SECRET_KEY))])
+    EncryptedCookieStorage(SECRET_KEY))])
 
 # Routes
 app.router.add_route('GET', '/', views.index, name='index')

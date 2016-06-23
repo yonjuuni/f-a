@@ -6,10 +6,10 @@ from .helper_functions import get_movies
 from .helper_functions import get_movie_by_id
 from .helper_functions import send_email
 from .helper_functions import get_trailers_by_title
-from .db_connect import get_db_session
+# from .db_connect import get_db_session
 
 
-db = get_db_session()
+# db = get_db_session()
 
 
 @template('index.html')

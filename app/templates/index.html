@@ -1,5 +1,6 @@
 {% from 'header.html' import header with context %}
 {% from 'footer.html' import footer with context %}
+{% from 'scripts.html' import common_scripts with context %}
 <!DOCTYPE HTML>
 
 <html>
@@ -48,11 +49,8 @@
 			  xhttp.send();
 			}
 			</script>
-			<script src="{{ app.router.static.url(filename='js/jquery.min.js') }}"></script>
-			<script src="{{ app.router.static.url(filename='js/skel.min.js') }}"></script>
-			<script src="{{ app.router.static.url(filename='js/util.js') }}"></script>
-			<!--[if lte IE 8]><script src="{{ app.router.static.url(filename='respond.min.js') }}"></script><![endif]-->
-			<script src="{{ app.router.static.url(filename='js/main.js') }}"></script>
+
+		{{ common_scripts() }}
 
 	</body>
 </html>

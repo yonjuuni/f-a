@@ -1,11 +1,8 @@
 {% from 'header.html' import header with context %}
 {% from 'footer.html' import footer with context %}
+{% from 'scripts.html' import common_scripts with context %}
 <!DOCTYPE HTML>
-<!--
-	Phantom by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
+
 <html>
 	<head>
 		<title>Film Advisor | {{ movie.title }}</title>
@@ -47,12 +44,7 @@
 
 			</div>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/skel.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
-			<script src="assets/js/main.js"></script>
+			{{ common_scripts() }}
 
 	</body>
 </html>

@@ -1,1 +1,1 @@
-from .app import runserver
+from .app import app
