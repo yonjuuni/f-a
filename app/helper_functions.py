@@ -11,6 +11,8 @@ from random import randrange
 from .config import BASE_DIR
 from .config import LOG_FILE
 from .config import API_KEY
+from .config import EMAIL_TO
+from .config import EMAIL_FROM
 from .db_connect import Movie
 
 
@@ -53,7 +55,7 @@ def get_trailers(limit, db):
     return trailers
 
 
-def send_email(subject, text, _to='alex@s1ck.org', _from='info@s1ck.org'):
+def send_email(subject, text, _to=EMAIL_TO, _from=EMAIL_FROM):
     msg = MIMEText(text)
     msg['Subject'] = subject
     msg['From'] = _from
