@@ -13,6 +13,8 @@ from .config import LOG_FILE
 from .config import API_KEY
 from .config import EMAIL_TO
 from .config import EMAIL_FROM
+from .config import SMTP_PORT
+from .config import SMTP_SERVER
 from .db_connect import Movie
 
 
@@ -62,9 +64,9 @@ def send_email(subject, text, _to=EMAIL_TO, _from=EMAIL_FROM):
     msg['To'] = _to
 
     try:
-        smtp_conn = smtplib.SMTP(host='smtp.gmail.com', port=587)
+        smtp_conn = smtplib.SMTP(host=SMTP_SERVER, port=SMTP_PORT)
         smtp_conn.starttls()
-        smtp_conn.login('info@s1ck.org', get_email_password())
+        smtp_conn.login(EMAIL_FROM, get_email_password())
     except SMTPHeloError:
         logger.error('Unable to initiate SMTP connection.')
     except SMTPAuthenticationError:
