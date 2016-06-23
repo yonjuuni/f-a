@@ -14,12 +14,7 @@ from .helper_functions import get_trailers_by_title
 
 @template('index.html')
 async def index(request):
-    type_mapping = {
-        'popular': 'popular',
-        'top': 'top_rated',
-        'upcoming': 'upcoming'
-    }
-    _type = type_mapping.get(request.path[1:])
+    _type = request.path[1:]
     if not _type:
         _type = 'popular'
     return {'movie_type': _type}
