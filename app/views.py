@@ -14,7 +14,12 @@ from .helper_functions import get_trailers_by_title
 
 @template('index.html')
 async def index(request):
-    _type = request.GET.get('movie_type')
+    type_mapping = {
+        'popular': 'popular',
+        'top': 'top_rated',
+        'upcoming': 'upcoming'
+    }
+    _type = type_mapping.get(request.path[1:])
     if not _type:
         _type = 'popular'
     return {'movie_type': _type}
@@ -22,7 +27,12 @@ async def index(request):
 
 @template('movies.html')
 async def movies(request):
-    _type = request.GET.get('movie_type')
+    type_mapping = {
+        'popular': 'popular',
+        'top': 'top_rated',
+        'upcoming': 'upcoming'
+    }
+    _type = type_mapping.get(request.match_info['movie_type'])
     return {'movies': get_movies(_type)}
 
 

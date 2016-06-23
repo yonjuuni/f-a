@@ -200,7 +200,7 @@
 })(jQuery);
 
 function loadMovies(_type) {
-	var types = ['popular', 'top_rated', 'upcoming'];
+	var types = ['popular', 'top', 'upcoming'];
   for (var t in types) {
   	if (types[t] == _type) {
   	  document.getElementById(types[t]).className = "button fit special";
@@ -213,9 +213,10 @@ function loadMovies(_type) {
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       document.getElementById("movies").innerHTML = xhttp.responseText;
+      history.pushState({'movie_type': _type}, '', '/' + _type)
     }
   };
 
-  xhttp.open("GET", "/movies?movie_type=" + _type, true);
+  xhttp.open("GET", "/movies/" + _type, true);
   xhttp.send();	
 }
