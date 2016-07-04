@@ -28,6 +28,9 @@ app.router.add_route('POST', '/top', views.email)
 app.router.add_route('GET', '/upcoming', views.index, name='upcoming')
 app.router.add_route('POST', '/upcoming', views.email)
 
+app.router.add_route('GET', '/about', views.about, name='about')
+app.router.add_route('POST', '/about', views.email)
+
 app.router.add_static('/static',
                       os.path.join(BASE_DIR, 'static'),
                       name='static')

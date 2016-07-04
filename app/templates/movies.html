@@ -1,7 +1,7 @@
 <section class="tiles">
     {% for movie in movies %}
 
-    <article><!-- class="{{ 'style' + range(1,7)|random()|string }}" -->
+    <article>
         <span class="image">
             <img src='{{ "https://image.tmdb.org/t/p/w500" + movie.backdrop_path if movie.backdrop_path else "" }}' alt="{{ movie.title }}" />
         </span>

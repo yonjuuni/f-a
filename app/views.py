@@ -56,3 +56,8 @@ async def email(request):
     url = request.app.router['index'].url()
 
     return web.HTTPFound(url)
+
+
+@template('about.html')
+async def about(request):
+    return {}
