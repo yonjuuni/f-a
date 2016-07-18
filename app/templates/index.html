@@ -1,60 +1,28 @@
-{% from 'header.html' import header with context %}
-{% from 'footer.html' import footer with context %}
-{% from 'scripts.html' import common_scripts with context %}
-<!DOCTYPE HTML>
+{% extends 'base.html' %}
 
-<html>
-	<head>
-		<title>Film Advisor</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--[if lte IE 8]><script src="{{ app.router.static.url(filename='js/ie/html5shiv.js') }}"></script><![endif]-->
-		<link rel="stylesheet" href="{{ app.router.static.url(filename='css/main.css') }}" />
-		<!--[if lte IE 9]><link rel="{{ app.router.static.url(filename='css/ie9.css') }}" /><![endif]-->
-		<!--[if lte IE 8]><link rel="{{ app.router.static.url(filename='css/ie8.css') }}" /><![endif]-->
-	</head>
-	<body onload=loadMovies('{{ movie_type }}')>
-		<!-- Wrapper -->
-			<div id="wrapper">
+{% block title %}Film Advisor{% endblock %}
 
-					{{ header() }}
+{% block onload %} onload=loadMovies('{{ movie_type }}'){% endblock %}
 
-				<!-- Main -->
-					<div id="main">
-						<div class="inner" >
-							<ul class="actions fit">
-								<li><button id='popular' class='button fit' type="button" onclick="loadMovies('popular')">Popular</button></li>
-								<li><button id='top' class='button fit' type="button" onclick="loadMovies('top')">Top Rated</button></li>
-								<li><button id='upcoming' class='button fit' type="button" onclick="loadMovies('upcoming')">Upcoming</button></li>
-							</ul>
-
-							<div id='movies'>
-							</div>
-
-							<p></p>
-              <div class="inner fit">
-								<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-				        <!-- f-a-responsive -->
-				        <ins class="adsbygoogle"
-		              style="display:block"
-		              data-ad-client="ca-pub-9691889163015511"
-		              data-ad-slot="9969653715"
-		              data-ad-format="auto"></ins>
-				        <script>
-				        (adsbygoogle = window.adsbygoogle || []).push({});
-				        </script>          
-              </div>
-						
-						</div>
-					</div>
-
-				{{ footer() }}
-
-			</div>
-
-		<!-- Scripts -->
-
-		{{ common_scripts() }}
-
-	</body>
-</html>
+{% block main %}
+<ul class="actions fit">
+  <li><button id='popular' class='button fit' type="button" onclick="loadMovies('popular')">Popular</button></li>
+  <li><button id='top' class='button fit' type="button" onclick="loadMovies('top')">Top Rated</button></li>
+  <li><button id='upcoming' class='button fit' type="button" onclick="loadMovies('upcoming')">Upcoming</button></li>
+</ul>
+<div id='movies'>
+</div>
+<p></p>
+<div class="inner fit">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- f-a-responsive -->
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-9691889163015511"
+    data-ad-slot="9969653715"
+    data-ad-format="auto"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>          
+</div>
+{% endblock %}

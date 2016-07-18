@@ -1,19 +1,18 @@
 <section class="tiles">
-    {% for movie in movies %}
-
-    <article>
-        <span class="image">
-            <img src='{{ "https://image.tmdb.org/t/p/w500" + movie.backdrop_path if movie.backdrop_path else "" }}' alt="{{ movie.title }}" />
-        </span>
-        <a href="{{ '/movie/' + movie.id|string }}">
-            <h2>{{ movie.title }}</h2>
-            <div class="content">
-                <p>
-                Year: {{ movie.release_date[:4] }} </br>
-                Rating: {{ movie.vote_average }}</br>
-                Genres: {{ movie.genres|join(', ') }}</p>
-            </div>
-        </a>
-    </article>
-    {% endfor %}
+  {% for movie in movies %}
+  <article>
+    <span class="image">
+      <img src='{{ "https://image.tmdb.org/t/p/w500" + movie.backdrop_path if movie.backdrop_path else "" }}' alt="{{ movie.title }}" />
+    </span>
+    <a href="{{ '/movie/' + movie.id|string }}">
+      <h2>{{ movie.title }}</h2>
+      <div class="content">
+        <p>
+        Year: {{ movie.release_date[:4] }} </br>
+        Rating: {{ movie.vote_average }}</br>
+        Genres: {{ movie.genres|join(', ') }}</p>
+      </div>
+    </a>
+  </article>
+  {% endfor %}
 </section>

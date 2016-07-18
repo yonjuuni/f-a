@@ -1,57 +1,28 @@
-{% from 'header.html' import header with context %}
-{% from 'footer.html' import footer with context %}
-{% from 'scripts.html' import common_scripts with context %}
-<!DOCTYPE HTML>
+{% extends 'base.html' %}
 
-<html>
-	<head>
-		<title>Film Advisor | {{ movie.title }}</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<!--[if lte IE 8]><script src="{{ app.router.static.url(filename='js/ie/html5shiv.js') }}"></script><![endif]-->
-		<link rel="stylesheet" href="{{ app.router.static.url(filename='css/main.css') }}" />
-		<!--[if lte IE 9]><link rel="{{ app.router.static.url(filename='css/ie9.css') }}" /><![endif]-->
-		<!--[if lte IE 8]><link rel="{{ app.router.static.url(filename='css/ie8.css') }}" /><![endif]-->
-	</head>
-	<body>
-		<!-- Wrapper -->
-			<div id="wrapper">
+{% block title %}Film Advisor | {{ movie.title }}{% endblock %}
 
-				{{ header() }}
-
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
-							<h1>{{ movie.title }} ({{ movie.release_date[:4] }})</h1>
-							<span class="image left"><img src='{{ "https://image.tmdb.org/t/p/w185" + movie.poster_path }}' alt="" /></span>
-							<h4>Original title: {{ movie.original_title }}</h4>
-							<h4>Release date: {{ movie.release_date }}</h4>
-							<p>Country: {% for country in movie.production_countries %}
-							{{country.name}}
-							{% if not loop.last %},{% endif %}
-							{% endfor %}</p>
-							<p>{{ movie.overview }}</p>
-							<p></p>
-             				<div class="inner fit">
-								<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-							        <!-- f-a-responsive -->
-							        <ins class="adsbygoogle"
-					              style="display:block"
-					              data-ad-client="ca-pub-9691889163015511"
-					              data-ad-slot="9969653715"
-					              data-ad-format="auto"></ins>
-							        <script>
-							        (adsbygoogle = window.adsbygoogle || []).push({});
-							        </script>          
-		             		</div>
-						</div>
-					</div>
-
-				{{ footer () }}
-
-			</div>
-
-			{{ common_scripts() }}
-
-	</body>
-</html>
+{% block main %}
+<h1>{{ movie.title }} ({{ movie.release_date[:4] }})</h1>
+<span class="image left"><img src='{{ "https://image.tmdb.org/t/p/w185" + movie.poster_path }}' alt="" /></span>
+<h4>Original title: {{ movie.original_title }}</h4>
+<h4>Release date: {{ movie.release_date }}</h4>
+<p>Country: {% for country in movie.production_countries %}
+{{country.name}}
+{% if not loop.last %},{% endif %}
+{% endfor %}</p>
+<p>{{ movie.overview }}</p>
+<p></p>
+<div class="inner fit">
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- f-a-responsive -->
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-9691889163015511"
+    data-ad-slot="9969653715"
+    data-ad-format="auto"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>          
+</div>
+{% endblock %}

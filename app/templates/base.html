@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+      <title>{% block title %}{% endblock %}</title>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <!--[if lte IE 8]><script src="{{ app.router.static.url(filename='js/ie/html5shiv.js') }}"></script><![endif]-->
+      <link rel="stylesheet" href="{{ app.router.static.url(filename='css/main.css') }}" />
+      <!--[if lte IE 9]><link rel="{{ app.router.static.url(filename='css/ie9.css') }}" /><![endif]-->
+      <!--[if lte IE 8]><link rel="{{ app.router.static.url(filename='css/ie8.css') }}" /><![endif]-->
+  </head>
+  <body{% block onload %}{% endblock %}>
+    <!-- Wrapper -->
+    <div id="wrapper">
+    {% include 'header.html' %}
+      <!-- Main -->
+      <div id="main">
+        <div class="inner" >
+        {% block main %}{% endblock %}
+        </div>
+      </div>
+      {% include 'footer.html' %}
+    </div>
+  {% include 'scripts.html' %}
+  </body>
+</html>
