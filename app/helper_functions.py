@@ -8,6 +8,10 @@ from email.mime.text import MIMEText
 from base64 import b64encode
 from base64 import b64decode
 from random import randrange
+from smtplib import SMTPHeloError
+from smtplib import SMTPAuthenticationError
+from smtplib import SMTPException
+from smtplib import SMTPNotSupportedError
 from .config import BASE_DIR
 from .config import LOG_FILE
 from .config import API_KEY
@@ -83,8 +87,8 @@ def send_email(subject, text, _to=EMAIL_TO, _from=EMAIL_FROM):
         else:
             logger.info('Sent an email to {}, subject: "{}"'.format(_to,
                                                                     subject))
-    finally:
-        smtp_conn.quit()
+        finally:
+            smtp_conn.quit()
 
 
 def set_email_password():
@@ -127,24 +131,30 @@ def get_movie_by_id(_id):
 
 
 def map_genre(_id):
-    g = {28: 'Action',
-         12: 'Adventure',
-         16: 'Animation',
-         35: 'Comedy',
-         80: 'Crime',
-         99: 'Documentary',
-         18: 'Drama',
-         10751: 'Family',
-         14: 'Fantasy',
-         10769: 'Foreign',
-         36: 'History',
-         27: 'Horror',
-         10402: 'Music',
-         9648: 'Mystery',
-         10749: 'Romance',
-         878: 'Science Fiction',
-         10770: 'TV Movie',
-         53: 'Thriller',
-         10752: 'War',
-         37: 'Western'}
+    g = {
+        28: 'Action',
+        12: 'Adventure',
+        16: 'Animation',
+        35: 'Comedy',
+        80: 'Crime',
+        99: 'Documentary',
+        18: 'Drama',
+        10751: 'Family',
+        14: 'Fantasy',
+        10769: 'Foreign',
+        36: 'History',
+        27: 'Horror',
+        10402: 'Music',
+        9648: 'Mystery',
+        10749: 'Romance',
+        878: 'Science Fiction',
+        10770: 'TV Movie',
+        53: 'Thriller',
+        10752: 'War',
+        37: 'Western'
+    }
     return g[_id]
+
+
+def search_movies(query):
+    return tmdb.Search().movie(query=query).get('results')
