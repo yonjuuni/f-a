@@ -7,6 +7,7 @@ import tmdbsimple as tmdb
 from email.mime.text import MIMEText
 from base64 import b64encode
 from base64 import b64decode
+from json.decoder import JSONDecodeError
 from random import randrange
 from smtplib import SMTPHeloError
 from smtplib import SMTPAuthenticationError
@@ -42,12 +43,16 @@ def get_trailers_by_title(title, limit=5):
     r = requests.get("http://trailersapi.com/trailers.json?movie={}&"
                      "limit={}&width=640".format(title, limit))
 
-    if r.json():
-        res = []
-        for item in r.json():
-            res.append([x[4:] for x in item['code'].split()
-                        if x.startswith('src')][0])
-        return res
+    try:
+        r.json()
+    except JSONDecodeError:
+        return None
+
+    res = []
+    for item in r.json():
+        res.append([x[4:] for x in item['code'].split()
+                    if x.startswith('src')][0])
+    return res
 
 
 def get_trailers(limit, db):
