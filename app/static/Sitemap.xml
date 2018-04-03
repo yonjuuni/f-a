@@ -5,27 +5,27 @@
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 <url>
-  <loc>http://filmadvisor.online/</loc>
+  <loc>https://filmadvisor.s1ck.org/</loc>
   <changefreq>daily</changefreq>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>http://filmadvisor.online/popular</loc>
+  <loc>https://filmadvisor.s1ck.org/popular</loc>
   <changefreq>daily</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://filmadvisor.online/top</loc>
+  <loc>https://filmadvisor.s1ck.org/top</loc>
   <changefreq>daily</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://filmadvisor.online/upcoming</loc>
+  <loc>https://filmadvisor.s1ck.org/upcoming</loc>
   <changefreq>daily</changefreq>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>http://filmadvisor.online/about</loc>
+  <loc>https://filmadvisor.s1ck.org/about</loc>
   <changefreq>daily</changefreq>
   <priority>0.80</priority>
 </url>
